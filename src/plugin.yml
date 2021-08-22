@@ -1,0 +1,4 @@
+name: InstantHoppers
+version: 1.0
+api-version: 1.17
+main: plugins.plainplaying.hoppers.InstantHoppers
