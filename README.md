@@ -48,7 +48,7 @@ I hope that you will find this plugin useful!
 
 ### Built With
 
-This plugin is built using
+This plugin was built using
 * [Java](https://www.java.com/en/)
 * [Spigot](https://www.spigotmc.org/)
 
