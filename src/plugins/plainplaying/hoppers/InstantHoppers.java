@@ -40,7 +40,7 @@ public class InstantHoppers extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void onHopperMoved(InventoryMoveItemEvent e) {
-        if (e.getDestination().getType().equals(InventoryType.HOPPER)) {
+        if (e.getSource().getType().equals(InventoryType.HOPPER)) {
             moveToNextHopper((Hopper)e.getSource().getHolder());
         }
     }
@@ -54,14 +54,40 @@ public class InstantHoppers extends JavaPlugin implements Listener {
     }
     private void moveToNextHopper(Hopper hopper){
         Inventory hopperItems = hopper.getInventory();
-        if (hopper.getBlock().getData() == 0x0) {
-            Material blockBelow = hopper.getLocation().subtract(0, 1, 0).getBlock().getType();
-            if (blockBelow.equals(Material.HOPPER)) {
-                mergeInventories(hopperItems,((Hopper) hopper.getLocation().subtract(0, 1, 0).getBlock().getState()).getInventory());
-            }else if (blockBelow.equals(Material.CHEST)){
-                mergeInventories(hopperItems,((Chest) hopper.getLocation().subtract(0, 1, 0).getBlock().getState()).getInventory());
-            }else if (blockBelow.equals(Material.TRAPPED_CHEST)){
-                mergeInventories(hopperItems,((org.bukkit.block.) hopper.getLocation().subtract(0, 1, 0).getBlock().getState()).getInventory());
+        Block target = hopper.getLocation().subtract(0, 1, 0).getBlock();
+        if (target.getType().equals(Material.HOPPER)) {
+            mergeInventories(hopperItems,((Hopper) target.getState()).getInventory());
+        }else if (hopper.getBlock().getData() == 0x0) {
+            if (target.getType().equals(Material.CHEST)){
+                mergeInventories(hopperItems,((Chest) target.getState()).getInventory());
+            }
+        }else if (hopper.getBlock().getData() == 0x2) {
+            target = hopper.getLocation().subtract(0,0,1).getBlock();
+            if (target.getType().equals(Material.HOPPER)) {
+                mergeInventories(hopperItems, ((Hopper) target.getState()).getInventory());
+            }else if (target.getType().equals(Material.CHEST)){
+                mergeInventories(hopperItems,((Chest) target.getState()).getInventory());
+            }
+        }else if (hopper.getBlock().getData() == 0x3) {
+            target = hopper.getLocation().add(0,0,1).getBlock();
+            if (target.getType().equals(Material.HOPPER)) {
+                mergeInventories(hopperItems, ((Hopper) target.getState()).getInventory());
+            }else if (target.getType().equals(Material.CHEST)){
+                mergeInventories(hopperItems,((Chest) target.getState()).getInventory());
+            }
+        }else if (hopper.getBlock().getData() == 0x4) {
+            target = hopper.getLocation().subtract(1,0,0).getBlock();
+            if (target.getType().equals(Material.HOPPER)) {
+                mergeInventories(hopperItems, ((Hopper) target.getState()).getInventory());
+            }else if (target.getType().equals(Material.CHEST)){
+                mergeInventories(hopperItems,((Chest) target.getState()).getInventory());
+            }
+        }else if (hopper.getBlock().getData() == 0x5) {
+            target = hopper.getLocation().add(1,0,0).getBlock();
+            if (target.getType().equals(Material.HOPPER)) {
+                mergeInventories(hopperItems, ((Hopper) target.getState()).getInventory());
+            }else if (target.getType().equals(Material.CHEST)){
+                mergeInventories(hopperItems,((Chest) target.getState()).getInventory());
             }
         }
     }
@@ -71,7 +97,6 @@ public class InstantHoppers extends JavaPlugin implements Listener {
                 if (merged != null){
                     if (merging != null){
                         if (merged.isSimilar(merging) && compareIfNotNull(merged.getItemMeta().getDisplayName(),merging.getItemMeta().getDisplayName()) && compareIfNotNull(merged.getItemMeta().getLore(),merged.getItemMeta().getLore())){
-                            getLogger().info(merged.getAmount()+", "+merging.getAmount());
                             if (merged.getAmount() + merging.getAmount() > 64){
                                 int oldAmount = merged.getAmount();
                                 merged.setAmount(64);
