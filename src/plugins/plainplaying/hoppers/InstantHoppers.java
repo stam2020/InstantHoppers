@@ -15,8 +15,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Objects;
-
 public class InstantHoppers extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
@@ -42,6 +40,8 @@ public class InstantHoppers extends JavaPlugin implements Listener {
     public void onHopperMoved(InventoryMoveItemEvent e) {
         if (e.getSource().getType().equals(InventoryType.HOPPER)) {
             moveToNextHopper((Hopper)e.getSource().getHolder());
+        }else if (e.getSource().getType().equals(InventoryType.CHEST)) {
+            transferFromChestToHopper((Chest)e.getSource().getHolder());
         }
     }
     @EventHandler
@@ -51,6 +51,9 @@ public class InstantHoppers extends JavaPlugin implements Listener {
                 moveToNextHopper((Hopper)e.getInventory().getHolder());
             }
         }
+    }
+    private void transferFromChestToHopper(Chest chest){
+        mergeInventories(chest.getInventory(),((Hopper)chest.getLocation().subtract(0,1,0).getBlock().getState()).getInventory());
     }
     private void moveToNextHopper(Hopper hopper){
         Inventory hopperItems = hopper.getInventory();
@@ -109,8 +112,10 @@ public class InstantHoppers extends JavaPlugin implements Listener {
                     }
                 }else{
                     if (merging != null) {
-                        mergeTo.setItem(mergeTo.firstEmpty(), merging);
-                        merging.setAmount(0);
+                        if (mergeTo.firstEmpty() != -1) {
+                            mergeTo.setItem(mergeTo.firstEmpty(), merging);
+                            merging.setAmount(0);
+                        }
                     }
                 }
             }
