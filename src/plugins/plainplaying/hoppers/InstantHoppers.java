@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Hopper;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -41,7 +42,11 @@ public class InstantHoppers extends JavaPlugin implements Listener {
         if (e.getSource().getType().equals(InventoryType.HOPPER)) {
             moveToNextHopper((Hopper)e.getSource().getHolder());
         }else if (e.getSource().getType().equals(InventoryType.CHEST)) {
-            transferFromChestToHopper((Chest)e.getSource().getHolder());
+            try {
+                transferFromChestToHopper((Chest) e.getSource().getHolder());
+            }catch (ClassCastException unused){
+                transferFromDoubleChestToHopper((DoubleChest) e.getSource().getHolder());
+            }
         }
     }
     @EventHandler
@@ -53,6 +58,9 @@ public class InstantHoppers extends JavaPlugin implements Listener {
         }
     }
     private void transferFromChestToHopper(Chest chest){
+        mergeInventories(chest.getInventory(),((Hopper)chest.getLocation().subtract(0,1,0).getBlock().getState()).getInventory());
+    }
+    private void transferFromDoubleChestToHopper(DoubleChest chest){
         mergeInventories(chest.getInventory(),((Hopper)chest.getLocation().subtract(0,1,0).getBlock().getState()).getInventory());
     }
     private void moveToNextHopper(Hopper hopper){
